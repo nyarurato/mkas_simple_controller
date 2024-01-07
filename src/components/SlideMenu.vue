@@ -1,74 +1,90 @@
-<script setup lang="ts">
-import { ref, reactive, computed, toRefs } from "vue";
-import type { Ref } from "vue";
-import SlideMenuButtonAdder from "./SlideMenuButtonAdder.vue";
-
-const drawFlag: Ref<boolean> = ref(false);
-
-function OpenMenu(): void {
-  drawFlag.value = !drawFlag.value;
-}
-</script>
-
 <template>
-  <nav>
-    <div>
-      <button @click="OpenMenu">ボタン</button>
-    </div>
-    <transition name="left">
-      <div v-if="drawFlag" class="drawer-menu-wrapper">
-        <div class="drawer-menu">
-          <!-- ここにメニューの内容を書いていく -->
-          <h1>メニュー</h1>
-          <SlideMenuButtonAdder name="ボタンを追加" />
-          <button @click="drawFlag = false">閉じる</button>
-        </div>
-      </div>
-    </transition>
-  </nav>
+  <v-navigation-drawer v-model="props.drawer" absolute bottom temporary>
+    <v-list nav dense>
+      <v-list-subheader>Settings</v-list-subheader>
+      <!-- List No.1 -->
+      <AddButtonDialog :ipadress="settingdata.controlBoardAddresses">
+        <template v-slot:openmethod="diag">
+          <v-list-item color="primary" @click="diag.show()">
+            <template v-slot:prepend>
+              <v-icon>mdi-cursor-default-click</v-icon>
+            </template>
+            <v-list-item-title>ボタン追加</v-list-item-title>
+          </v-list-item>
+        </template>
+      </AddButtonDialog>
+
+      <!-- List No.2 -->
+      <ButtonsListDialog :action-buttons="settingdata.actionButtons">
+        <template v-slot:openmethod="diag">
+          <v-list-item color="primary" @click="diag.show()">
+            <template v-slot:prepend>
+              <v-icon>mdi-information-outline</v-icon>
+            </template>
+            <v-list-item-title>ボタン情報</v-list-item-title>
+          </v-list-item>
+        </template>
+      </ButtonsListDialog>
+
+      <!-- List No.3 -->
+
+      <SettingDialog>
+        <template v-slot:openmethod="diag">
+          <v-list-item color="primary" @click="diag.show()">
+            <template v-slot:prepend>
+              <v-icon>mdi-cog</v-icon>
+            </template>
+            <v-list-item-title>設定</v-list-item-title>
+          </v-list-item>
+        </template>
+      </SettingDialog>
+
+      <!-- List No.4 -->
+      <SettingLoader>
+        <template v-slot:openmethod="diag">
+          <v-list-item color="primary" @click="diag.show()">
+            <template v-slot:prepend>
+              <v-icon>mdi-file-import-outline</v-icon>
+            </template>
+            <v-list-item-title>データ読込</v-list-item-title>
+          </v-list-item>
+        </template>
+      </SettingLoader>
+
+      <!-- List No.5 -->
+      <SettingSaver
+        :action-buttons="settingdata.actionButtons"
+        :settings="'aaa'"
+      >
+        <template v-slot:openmethod="diag">
+          <v-list-item color="primary" @click="diag.show()">
+            <template v-slot:prepend>
+              <v-icon>mdi-content-save</v-icon>
+            </template>
+            <v-list-item-title>データ保存</v-list-item-title>
+          </v-list-item>
+        </template>
+      </SettingSaver>
+    </v-list>
+  </v-navigation-drawer>
 </template>
 
-<style>
-.right-enter-active,
-.right-leave-active {
-  transform: translate(0px, 0px);
-  transition: transform 225ms cubic-bezier(0, 0, 0.2, 1) 0ms;
-}
-.right-enter,
-.right-leave-to {
-  transform: translateX(100vw) translateX(0px);
-}
+<script setup lang="ts">
+import { defineComponent, defineProps, ref, inject } from "vue";
+import type { Ref } from "vue";
+import AddButtonDialog from "@/components/AddButtonDialog.vue";
+import SettingDialog from "./SettingDialog.vue";
+import BasicDialog from "./BasicDialog.vue";
+import ButtonsListDialog from "./ButtonsListDialog.vue";
+import SettingSaver from "./SettingSaver.vue";
+import SettingLoader from "./SettingLoader.vue";
+import { ActionButton } from "./ActionButton";
+import { SettingData } from "./SettingData";
 
-.left-leave-active {
-  transform: translate(0px, 0px);
-  transition: transform 500ms cubic-bezier(0, 0, 0.2, 1) 0ms;
-}
+const settingdata = inject<SettingData>("settingDatas"); //設定値を取得
+if (!settingdata) throw new Error("No SettingDatas provided");
 
-.left-enter-active {
-  transform: translate(-100vw, 0px);
-  transition: transform 225ms cubic-bezier(0, 0, 0.2, 1) 0ms;
-}
-
-.left-enter,
-.left-leave-to {
-  transform: translateX(-100vw) translateX(0px);
-}
-.left-enter-to,
-.left-leave {
-  transform: translateX(0vw) translateX(0px);
-}
-
-.drawer-menu-wrapper {
-  position: fixed;
-  z-index: 10;
-  top: 0;
-  right: 0;
-  left: 0;
-  width: 30vw;
-  height: 100%;
-}
-.drawer-menu {
-  padding: 24px;
-  background-color: aqua;
-}
-</style>
+const props = defineProps<{
+  drawer: boolean;
+}>();
+</script>

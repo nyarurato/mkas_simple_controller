@@ -6,7 +6,7 @@ const path = require('path')
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: 'test_vue_typescript',
+  base: process.env.NODE_ENV === "production" ? "/test_vue_typescript/" : "./",
   plugins: [
     vue(),
     // https://github.com/vuetifyjs/vuetify-loader/tree/next/packages/vite-plugin

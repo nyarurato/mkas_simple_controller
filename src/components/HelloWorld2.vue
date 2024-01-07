@@ -4,132 +4,96 @@
       <v-col cols="12">
         <v-img :src="logo" class="my-3" contain height="200" />
       </v-col>
-
-      <v-col class="mb-4">
-        <h1 class="display-2 font-weight-bold mb-3">
-          Welcome to Vuetify 3 Beta
-        </h1>
-
-        <h4>Vite Preview</h4>
-
-        <p class="subheading font-weight-regular">
-          For help and collaboration with other Vuetify developers,
-          <br />please join our online
-          <a href="https://community.vuetifyjs.com" target="_blank"
-            >Discord Community</a
-          >
-        </p>
-      </v-col>
-
-      <v-col class="mb-5" cols="12">
-        <h2 class="headline font-weight-bold mb-5">What's next?</h2>
-
-        <v-row justify="center">
-          <a
-            v-for="(next, i) in whatsNext"
-            :key="i"
-            :href="next.href"
-            class="subheading mx-3"
-            target="_blank"
-          >
-            {{ next.text }}
-          </a>
-        </v-row>
-      </v-col>
-
-      <v-col class="mb-5" cols="12">
-        <h2 class="headline font-weight-bold mb-5">Important Links</h2>
-
-        <v-row justify="center">
-          <a
-            v-for="(link, i) in importantLinks"
-            :key="i"
-            :href="link.href"
-            class="subheading mx-3"
-            target="_blank"
-          >
-            {{ link.text }}
-          </a>
-        </v-row>
-      </v-col>
-
-      <v-col class="mb-5" cols="12">
-        <h2 class="headline font-weight-bold mb-5">Ecosystem</h2>
-
-        <v-row justify="center">
-          <a
-            v-for="(eco, i) in ecosystem"
-            :key="i"
-            :href="eco.href"
-            class="subheading mx-3"
-            target="_blank"
-          >
-            {{ eco.text }}
-          </a>
-        </v-row>
-      </v-col>
     </v-row>
+    <v-app-bar app color="primary" dark>
+      <v-app-bar-nav-icon></v-app-bar-nav-icon>
+      <v-toolbar-title>Collapsing Bar</v-toolbar-title>
+    </v-app-bar>
+    <v-card max-width="400" class="mx-auto my-auto" hover>
+      <v-carousel
+        cycle
+        height="400"
+        hide-delimiter-background
+        show-arrows-on-hover
+      >
+        <v-carousel-item v-for="(slide, i) in slides" :key="slide">
+          <v-sheet :color="colors[i]" height="100%">
+            <v-row class="fill-height" align="center" justify="center">
+              <div class="display-3">{{ slide }} Slide</div>
+            </v-row>
+          </v-sheet>
+        </v-carousel-item>
+      </v-carousel>
+      <v-card-title>My Carousel</v-card-title>
+      <v-card-subtitle class="font-italic font-weight-black"
+        >John</v-card-subtitle
+      >
+      <v-avatar class="mx-6">
+        <img src="https://cdn.vuetifyjs.com/images/john.jpg" alt="John" />
+      </v-avatar>
+      <v-card-text
+        >Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
+        eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+        minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
+        ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
+        voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur
+        sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+        mollit anim id est laborum.</v-card-text
+      >
+    </v-card>
+    <div class="text-center">
+      <v-dialog v-model="dialog22" width="500">
+        <template v-slot:activator="{ isActive: on, props: attrs }">
+          <v-btn color="red lighten-2" dark v-bind="attrs" v-on="on">
+            Click Me
+          </v-btn>
+        </template>
+
+        <v-card>
+          <v-card-title class="text-h5 grey lighten-2">
+            Privacy Policy
+          </v-card-title>
+
+          <v-card-text>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+            aliquip ex ea commodo consequat. Duis aute irure dolor in
+            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+            culpa qui officia deserunt mollit anim id est laborum.
+          </v-card-text>
+
+          <v-divider></v-divider>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="primary" text="true" @click="dialog22 = false">
+              I accept
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </div>
   </v-container>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
+import type { Ref } from "vue";
 
 // Logo
 import logo from "../assets/logo.svg";
 
 export default defineComponent({
   name: "HelloWorld2",
-
-  data() {
+  setup() {
+    const dialog22: Ref<boolean> = ref(false);
     return {
-      ecosystem: [
-        {
-          text: "vuetify-loader",
-          href: "https://github.com/vuetifyjs/vuetify-loader/tree/next",
-        },
-        {
-          text: "github",
-          href: "https://github.com/vuetifyjs/vuetify/tree/next",
-        },
-        {
-          text: "awesome-vuetify",
-          href: "https://github.com/vuetifyjs/awesome-vuetify",
-        },
-      ],
-      importantLinks: [
-        {
-          text: "Chat",
-          href: "https://community.vuetifyjs.com",
-        },
-        {
-          text: "Made with Vuetify",
-          href: "https://madewithvuejs.com/vuetify",
-        },
-        {
-          text: "Twitter",
-          href: "https://twitter.com/vuetifyjs",
-        },
-        {
-          text: "Articles",
-          href: "https://medium.com/vuetify",
-        },
-      ],
+      dialog22,
       logo,
-      whatsNext: [
-        {
-          text: "Explore components",
-          href: "https://vuetifyjs.com",
-        },
-        {
-          text: "Roadmap",
-          href: "https://vuetifyjs.com/en/introduction/roadmap/",
-        },
-        {
-          text: "Frequently Asked Questions",
-          href: "https://vuetifyjs.com/getting-started/frequently-asked-questions",
-        },
-      ],
+      slides: ["First", "Second", "Third"],
+      colors: ["red", "green", "blue"],
     };
   },
 });
