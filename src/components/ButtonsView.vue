@@ -1,14 +1,23 @@
 <template>
   <div>
-    <v-btn
+    <ActionConfirmDialog
       v-for="(button, index) in settingdata.actionButtons"
       :key="index"
-      :style="{ top: button.y + 'px', left: button.x + 'px' }"
-      :color="button.color"
-      class="button"
-    >
-      {{ button.label }}
-    </v-btn>
+      :actionbutton="button"
+      ><template v-slot:openmethod="diag">
+        <v-btn
+          :style="{
+            top: button.y + 100 + 'px',
+            left: button.x + 40 + 'px',
+          }"
+          :color="button.color"
+          class="button"
+          @click="diag.show()"
+        >
+          {{ button.label }}
+        </v-btn></template
+      >
+    </ActionConfirmDialog>
   </div>
 </template>
 
@@ -16,6 +25,7 @@
 import { ActionButton } from "@/components/ActionButton";
 import { ref, inject } from "vue";
 import { SettingData } from "./SettingData";
+import ActionConfirmDialog from "./ActionConfirmDialog.vue";
 
 const settingdata = inject<SettingData>("settingDatas");
 if (!settingdata) throw new Error("No SettingDatas provided");

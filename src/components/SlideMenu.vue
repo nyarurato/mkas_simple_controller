@@ -1,9 +1,9 @@
 <template>
-  <v-navigation-drawer v-model="props.drawer" absolute bottom temporary>
+  <v-navigation-drawer v-model="drawer" absolute bottom temporary>
     <v-list nav dense>
       <v-list-subheader>Settings</v-list-subheader>
       <!-- List No.1 -->
-      <AddButtonDialog :ipadress="settingdata.controlBoardAddresses">
+      <AddButtonDialog>
         <template v-slot:openmethod="diag">
           <v-list-item color="primary" @click="diag.show()">
             <template v-slot:prepend>
@@ -70,7 +70,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineComponent, defineProps, ref, inject } from "vue";
+import { defineComponent, ref, inject } from "vue";
 import type { Ref } from "vue";
 import AddButtonDialog from "@/components/AddButtonDialog.vue";
 import SettingDialog from "./SettingDialog.vue";
@@ -83,6 +83,9 @@ import { SettingData } from "./SettingData";
 
 const settingdata = inject<SettingData>("settingDatas"); //設定値を取得
 if (!settingdata) throw new Error("No SettingDatas provided");
+
+const drawer = inject<Ref<boolean>>("drawer");
+if (!drawer) throw new Error("No drawer provided");
 
 const props = defineProps<{
   drawer: boolean;

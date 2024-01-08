@@ -35,6 +35,20 @@ export class ActionButton {
   set_image_base64(image_base64: string) {
     this.image_base64 = image_base64;
   }
+
+  paste_param(param: ActionButton) {
+    this.destination = param.destination;
+    this.label = param.label;
+    this.x = param.x;
+    this.y = param.y;
+    this.actionType = param.actionType;
+    this.is_use_image = param.is_use_image;
+    this.is_use_icon = param.is_use_icon;
+    this.color = param.color;
+    this.image_base64 = param.image_base64;
+    this.icon_name = param.icon_name;
+    this.action = param.action;
+  }
 }
 
 export const AcctionType = {
@@ -43,3 +57,10 @@ export const AcctionType = {
   ExecuteFile: 2,
   SendGcode: 3,
 } as const;
+
+export const ActionTypeLabel = [
+  { value: 0, title: "何もしない" },
+  { value: 1, title: "登録モーション実行" },
+  { value: 2, title: "ファイル実行" },
+  { value: 3, title: "Gコード送信" },
+];

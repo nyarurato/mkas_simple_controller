@@ -17,7 +17,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineComponent, defineProps, ref } from "vue";
+import { defineComponent, ref } from "vue";
 import type { Ref } from "vue";
 
 const dialog: Ref<boolean> = ref(false);
@@ -29,4 +29,13 @@ const props = defineComponent({
 function show(): void {
   dialog.value = true;
 }
+
+function close(): void {
+  dialog.value = false;
+}
+
+defineExpose({
+  show,
+  close,
+});
 </script>

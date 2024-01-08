@@ -1,5 +1,5 @@
 <template>
-  <BasicDialog title="SettingSave">
+  <BasicDialog title="SettingSave" ref="basicDialog">
     <template v-slot:openmethod="diag">
       <slot name="openmethod" v-bind:show="diag.show"></slot>
     </template>
@@ -14,26 +14,23 @@
 </template>
 
 <script lang="ts" setup>
-import { PropType } from "vue";
+import { PropType, ref } from "vue";
 import { ActionButton } from "./ActionButton";
 import BasicDialog from "./BasicDialog.vue";
+import { SettingData } from "./SettingData";
+import { inject } from "vue";
 
-const props = defineProps({
-  actionButtons: {
-    type: Array as PropType<ActionButton[]>,
-    required: true,
-  },
-  settings: {
-    type: String,
-    required: true,
-  },
-});
+const settingdata = inject<SettingData>("settingDatas"); //設定値を取得
+if (!settingdata) throw new Error("No SettingDatas provided");
+
+const basicDialog = ref();
 
 function saveToFile() {
-  const dataToSave = {
-    settings: props.settings,
-    actionButtons: props.actionButtons,
-  };
+  if (!settingdata) {
+    console.log("No setting data");
+    return;
+  }
+  const dataToSave = settingdata;
 
   const jsonData = JSON.stringify(dataToSave, null, 2);
 
@@ -46,5 +43,6 @@ function saveToFile() {
   link.click();
 
   URL.revokeObjectURL(url);
+  basicDialog.value.close();
 }
 </script>

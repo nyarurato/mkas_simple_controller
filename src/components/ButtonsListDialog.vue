@@ -25,9 +25,13 @@
             </td>
             <td>{{ button.label }}</td>
             <td>( {{ button.x }} , {{ button.y }} )</td>
-            <td>{{ button.actionType }}</td>
+            <td>{{ ActionTypeLabel[button.actionType].title }}</td>
             <td>
-              <v-btn @click="editButton(button)" color="green">編集</v-btn>
+              <EditButtonDialog :_button="button">
+                <template v-slot:openmethod="diag">
+                  <v-btn @click="diag.show" color="green">編集</v-btn>
+                </template>
+              </EditButtonDialog>
             </td>
             <td>
               <v-btn @click="deleteButton(button)" color="red">削除</v-btn>
@@ -40,18 +44,22 @@
 </template>
 
 <script lang="ts" setup>
-import { PropType, inject } from "vue";
-import { ActionButton } from "./ActionButton";
+import { PropType, inject, ref } from "vue";
+import { ActionButton, ActionTypeLabel } from "./ActionButton";
 import BasicDialog from "./BasicDialog.vue";
 import { SettingData } from "./SettingData";
+import BasicButtonDialog from "./BasicButtonDialog.vue";
+import EditButtonDialog from "./EditButtonDialog.vue";
 
 const settingdata = inject<SettingData>("settingDatas"); //設定値を取得
 if (!settingdata) throw new Error("No SettingDatas provided");
 
-function editButton(button: ActionButton) {
-  // Handle edit button click
-}
 function deleteButton(button: ActionButton) {
-  // Handle delete button click
+  if (!settingdata) throw new Error("No SettingDatas provided");
+  // Remove the button object from settingdata.actionButtons
+  const index = settingdata.actionButtons.indexOf(button);
+  if (index > -1) {
+    settingdata.actionButtons.splice(index, 1);
+  }
 }
 </script>

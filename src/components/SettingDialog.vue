@@ -1,5 +1,5 @@
 <template>
-  <BasicDialog title="Settings">
+  <BasicDialog ref="basicDialog">
     <template v-slot:openmethod="diag">
       <slot name="openmethod" v-bind:show="diag.show"></slot>
     </template>
@@ -48,23 +48,41 @@
 
 <script lang="ts" setup>
 import BasicDialog from "./BasicDialog.vue";
-import { ref, inject } from "vue";
+import { ref, inject, watch } from "vue";
 import { SettingData } from "./SettingData";
+import { APIComunicator } from "./APIComunicator";
 
 const ipAddress = ref("kas.local");
 const executableFileName = ref("program.nc");
 const executionFolder = ref("0://gcodes/mkas/");
 const is_valid_ipaddress = ref(false);
+const basicDialog = ref();
 
 const settingdata = inject<SettingData>("settingDatas"); //設定値を取得
 if (!settingdata) throw new Error("No SettingDatas provided");
 
+const api = inject<APIComunicator>("api"); //設定値を取得
+if (!api) throw new Error("No APIComunicator provided");
+
+// Initialize the values
 executableFileName.value = settingdata.executionFileName;
 executionFolder.value = settingdata.executionFolder;
+if (settingdata.controlBoardAddresses.length > 0)
+  ipAddress.value = settingdata.controlBoardAddresses[0];
 
-function checkConnection() {
+watch(settingdata, () => {
+  executableFileName.value = settingdata.executionFileName;
+  executionFolder.value = settingdata.executionFolder;
+});
+
+async function checkConnection() {
   // Perform connection check logic here
-  is_valid_ipaddress.value = !is_valid_ipaddress.value;
+  console.log(settingdata);
+  if (api) is_valid_ipaddress.value = await api?.checkValidAPI(ipAddress.value);
+  //追加
+  if (is_valid_ipaddress.value) {
+    settingdata?.setControlBoardAddresses(ipAddress.value);
+  }
 }
 
 function saveSettings() {
@@ -73,5 +91,6 @@ function saveSettings() {
     settingdata.executionFileName = executableFileName.value;
     settingdata.executionFolder = executionFolder.value;
   }
+  basicDialog.value.close();
 }
 </script>

@@ -29,13 +29,14 @@
 </template>
 
 <script setup lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, reactive } from "vue";
 import type { Ref } from "vue";
 import SlideMenu from "../components/SlideMenu.vue";
 import ButtonsView from "@/components/ButtonsView.vue";
 import { provide } from "vue";
 import { SettingData } from "../components/SettingData";
 import { ActionButton } from "../components/ActionButton";
+import { APIComunicator } from "../components/APIComunicator";
 
 const settingDatas = reactive(new SettingData());
 const sample_action_button = new ActionButton(
@@ -67,12 +68,16 @@ provide("settingDatas", settingDatas); //設定値を共有するためのprovid
 
 // Logo
 import mkas_icon from "../assets/mkas_icon.svg";
-import { reactive } from "vue";
 
-const drawer2: Ref<boolean> = ref(false);
+const drawer2 = ref(false);
+
+provide("drawer", drawer2); //設定値を共有するためのprovide
+
+const api = new APIComunicator();
+
+provide("api", api); //設定値を共有するためのprovide
 
 const props = defineComponent({
   name: "About-2",
-  //drawer2,
 });
 </script>
