@@ -61,8 +61,8 @@ const basicDialog = ref();
 const settingdata = inject<SettingData>("settingDatas"); //設定値を取得
 if (!settingdata) throw new Error("No SettingDatas provided");
 
-const api = inject<APIComunicator>("api"); //設定値を取得
-if (!api) throw new Error("No APIComunicator provided");
+const apis = inject<Array<APIComunicator>>("apis"); //設定値を取得
+if (!apis) throw new Error("No APIComunicator provided");
 
 // Initialize the values
 executableFileName.value = settingdata.executionFileName;
@@ -78,7 +78,22 @@ watch(settingdata, () => {
 async function checkConnection() {
   // Perform connection check logic here
   console.log(settingdata);
-  if (api) is_valid_ipaddress.value = await api?.checkValidAPI(ipAddress.value);
+  if (apis) {
+    //apisにipaddressのapiがあるかどうか
+    const _api = apis.find(
+      (api) => api.duetAddressWithoutHttp === ipAddress.value
+    );
+
+    if (_api) {
+      //あれば、そのapiを使う
+      is_valid_ipaddress.value = await _api.checkValidAPI(ipAddress.value);
+    } else {
+      //なければ、新しくapiを作る
+      const api = new APIComunicator();
+      is_valid_ipaddress.value = await api?.checkValidAPI(ipAddress.value);
+      if (is_valid_ipaddress.value) apis.push(api);
+    }
+  }
   //追加
   if (is_valid_ipaddress.value) {
     settingdata?.setControlBoardAddresses(ipAddress.value);

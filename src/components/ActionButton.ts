@@ -2,7 +2,7 @@
 //AddButtonDialogで追加されるボタンの定義
 export class ActionButton {
   destination = "";
-  label = "Sample";
+  label = "ボタン";
   x = 0;
   y = 0;
   actionType =

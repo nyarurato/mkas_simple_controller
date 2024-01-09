@@ -6,9 +6,24 @@ import RawAxiosRequestHeaders from "axios";
 // Duetのconfig.gにM586 C"*"必要かもしれない
 
 export class APIComunicator {
-  private duetAddress = "";
+  private _duetAddress = "";
+  public get duetAddress(): string {
+    return this._duetAddress;
+  }
+  public get duetAddressWithoutHttp(): string {
+    return this._duetAddress.replace(/^https?:\/\//, "");
+  }
+  private config = new Configuration();
+  private api = new DefaultApi(this.config);
+  private _is_connected = false;
+  public get is_connected(): boolean {
+    return this._is_connected;
+  }
+
   constructor() {
     //pass
+
+    this.config.password = "reprap";
   }
 
   public async checkValidAPI(address: string): Promise<boolean> {
@@ -18,18 +33,16 @@ export class APIComunicator {
     }
 
     //次にaddressがDuetのAPIを持っているか確認する
-    const config = new Configuration();
-    config.username = "reprap";
-    config.password = "reprap";
-    config.basePath = address;
-    const headers = {};
-    config.baseOptions = headers;
-    const api = new DefaultApi(config);
-    const res = api.rrConnectGet("reprap");
+    this.config.basePath = address;
+    const res = this.api.rrConnectGet("reprap");
     try {
       const res_val = await res;
       console.log(res_val);
-      if (res_val.status === 200) return true;
+      if (res_val.status === 200) {
+        this._duetAddress = address;
+        this._is_connected = true;
+        return true;
+      }
     } catch (error) {
       console.log(error);
       return false;
@@ -37,23 +50,35 @@ export class APIComunicator {
     return false;
   }
 
-  public openDuetConnection(address: string): boolean {
+  public async getDuetStatus(): Promise<string> {
+    const res = this.api.rrModelGet("state.status", "f");
+
+    try {
+      const res_val = await res;
+      console.log(res_val);
+      if (res_val.status === 200) {
+        return (res_val.data.result ?? "") as string;
+      }
+    } catch (error) {
+      console.log(error);
+      return "";
+    }
+    return "";
+  }
+
+  public async sendDuetCommand(gcode: string): Promise<boolean> {
+    const res = this.api.rrGcodeGet(gcode);
+
+    try {
+      const res_val = await res;
+      console.log(res_val);
+      if (res_val.status === 200) {
+        return true;
+      }
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
     return false;
-  }
-
-  public getDuetStatus(): void {
-    //pass
-  }
-
-  public getDuetFiles(): void {
-    //pass
-  }
-
-  public sendDuetCommand(): void {
-    //pass
-  }
-
-  public sendDuetFile(): void {
-    //pass
   }
 }

@@ -35,13 +35,13 @@
           <v-col>
             <v-text-field
               type="number"
-              label="X座標"
+              label="ボタンX座標"
               v-model.number="xCoordinate"
             />
 
             <v-text-field
               type="number"
-              label="Y座標"
+              label="ボタンY座標"
               v-model.number="yCoordinate"
             />
           </v-col>
@@ -163,6 +163,13 @@ function makeButton() {
     false
   );
   button.color = btcolor.value;
+
+  if (selected_action_index === AcctionType.ExecuteFile)
+    button.action = file_name.value;
+  else if (selected_action_index === AcctionType.SendGcode)
+    button.action = gcode.value;
+  else button.action = "";
+
   settingdata?.actionButtons.push(button);
   closeDialog();
 }

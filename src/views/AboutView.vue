@@ -73,9 +73,9 @@ const drawer2 = ref(false);
 
 provide("drawer", drawer2); //設定値を共有するためのprovide
 
-const api = new APIComunicator();
+const apis = new Array<APIComunicator>();
 
-provide("api", api); //設定値を共有するためのprovide
+provide("apis", apis); //設定値を共有するためのprovide
 
 const props = defineComponent({
   name: "About-2",

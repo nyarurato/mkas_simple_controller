@@ -26,10 +26,15 @@
 
 <script lang="ts" setup>
 import BasicDialog from "./BasicDialog.vue";
-import { ref } from "vue";
+import { ref, inject } from "vue";
 import { ActionButton, ActionTypeLabel, AcctionType } from "./ActionButton";
+import { APIComunicator } from "./APIComunicator";
+import { popScopeId } from "vue";
 
 const basicDialog = ref();
+
+const apis = inject<Array<APIComunicator>>("apis");
+if (!apis) throw new Error("No API provided");
 
 const props = defineProps<{
   actionbutton: ActionButton;
@@ -43,8 +48,34 @@ function cancel() {
   closeDialog();
 }
 
-function performAction() {
+async function performAction() {
+  if (props.actionbutton.actionType === AcctionType.None) closeDialog();
+
+  const api = apis?.find(
+    (api) => api.duetAddressWithoutHttp === props.actionbutton.destination
+  );
+  console.log(api);
+  if (!api) {
+    console.log("API not found");
+    return;
+  }
+
   // Perform the action here
+  if (props.actionbutton.actionType === AcctionType.ExecuteFile) {
+    // Execute file
+    console.log("Execute file: " + props.actionbutton.action);
+  } else if (props.actionbutton.actionType === AcctionType.SendGcode) {
+    // Send Gcode
+    console.log("Send Gcode: " + props.actionbutton.action);
+    const res = await api?.sendDuetCommand(props.actionbutton.action);
+    console.log("Send Gcode: " + props.actionbutton.action + " res: " + res);
+  } else if (
+    props.actionbutton.actionType === AcctionType.ExecuteRegisteredMotion
+  ) {
+    // Send Gcode
+    console.log("Send Gcode: " + props.actionbutton.action);
+  }
+
   closeDialog();
 }
 </script>
