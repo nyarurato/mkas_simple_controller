@@ -36,6 +36,25 @@ export class ActionButton {
     this.image_base64 = image_base64;
   }
 
+  async set_image_from_file(fileobj: File) {
+    // ファイルを読み込む
+    const reader = new FileReader();
+    console.log(fileobj);
+    await new Promise<void>((resolve, reject) => {
+      reader.onload = (event) => {
+        if (event.target && event.target.result) {
+          const base64 = event.target.result as string;
+          this.image_base64 = base64;
+          console.log(base64);
+          resolve();
+        } else {
+          reject(new Error("Failed to read file"));
+        }
+      };
+      reader.readAsDataURL(fileobj);
+    });
+  }
+
   paste_param(param: ActionButton) {
     this.destination = param.destination;
     this.label = param.label;

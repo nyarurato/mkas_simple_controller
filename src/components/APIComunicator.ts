@@ -2,6 +2,7 @@ import axios from "axios";
 import { DefaultApi } from "./Duet/api";
 import { Configuration } from "./Duet/configuration";
 import RawAxiosRequestHeaders from "axios";
+import { toast } from "vuetify-sonner";
 
 // Duetのconfig.gにM586 C"*"必要かもしれない
 
@@ -41,10 +42,16 @@ export class APIComunicator {
       if (res_val.status === 200) {
         this._duetAddress = address;
         this._is_connected = true;
+        toast.success("接続成功", {
+          description: address + "へ接続しました。",
+        });
         return true;
       }
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
+      toast.error("接続失敗", {
+        description: address + "へ接続できませんでした。<br>" + error.message,
+      });
       return false;
     }
     return false;
@@ -73,10 +80,30 @@ export class APIComunicator {
       const res_val = await res;
       console.log(res_val);
       if (res_val.status === 200) {
+        toast.success("Gコード送信成功", {
+          description:
+            this.duetAddress + "へGコードを送信しました。<br>" + gcode,
+        });
         return true;
+      } else {
+        toast.error("Gコード送信失敗", {
+          description:
+            this.duetAddress +
+            "へGコードを送信できませんでした。<br>" +
+            res_val.status +
+            " " +
+            res_val.statusText,
+        });
+        return false;
       }
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
+      toast.error("Gコード送信失敗", {
+        description:
+          this.duetAddress +
+          "へGコードを送信できませんでした。送信エラー<br>" +
+          error.message,
+      });
       return false;
     }
     return false;

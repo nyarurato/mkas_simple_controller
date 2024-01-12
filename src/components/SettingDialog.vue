@@ -8,11 +8,18 @@
       <v-form>
         <v-row>
           <v-col>
+            <v-select
+              label="制御基板アドレス"
+              :items="settingdata.controlBoardAddresses.concat(['新規追加'])"
+              v-model="selectedAddress"
+            >
+            </v-select>
             <v-text-field
+              v-if="selectedAddress === '新規追加'"
               type="text"
               id="ipAddress"
               v-model="ipAddress"
-              label="制御基板アドレス"
+              label="新規制御基板アドレス"
             />
 
             <v-chip>
@@ -52,6 +59,7 @@ import { ref, inject, watch } from "vue";
 import { SettingData } from "./SettingData";
 import { APIComunicator } from "./APIComunicator";
 
+const selectedAddress = ref("");
 const ipAddress = ref("kas.local");
 const executableFileName = ref("program.nc");
 const executionFolder = ref("0://gcodes/mkas/");
@@ -77,6 +85,11 @@ watch(settingdata, () => {
 
 async function checkConnection() {
   // Perform connection check logic here
+  if (selectedAddress.value != "新規追加") {
+    //新規追加でない場合
+    ipAddress.value = selectedAddress.value;
+  }
+
   console.log(settingdata);
   if (apis) {
     //apisにipaddressのapiがあるかどうか

@@ -19,9 +19,8 @@
             <v-text-field type="text" label="タイトル" v-model="buttontitle" />
             <v-switch
               label="ボタン画像有効化"
-              primary
               v-model="is_image"
-              disabled
+              color="primary"
             ></v-switch>
             <v-file-input
               label="ボタン画像"
@@ -29,6 +28,7 @@
               chips
               accept="image/*"
               :disabled="!is_image"
+              v-model="imgfile"
             ></v-file-input>
             <ColorPickerDialog v-model:color="btcolor"></ColorPickerDialog>
           </v-col>
@@ -61,7 +61,7 @@
             <div v-if="selected_action === 2">
               <v-text-field
                 type="text"
-                label="ファイル名"
+                label="ファイル名(例:0://gcodes/...)"
                 v-model="file_name"
               />
             </div>
@@ -106,6 +106,7 @@ const yCoordinate = ref(0);
 const buttontitle = ref("Button");
 const gcode = ref("");
 const file_name = ref("");
+const imgfile = ref(Array<File>());
 const is_image = ref(false);
 const selected_action = ref(0);
 const button_ipaddress = ref("");
@@ -122,19 +123,35 @@ reset_param();
 
 function reset_param() {
   if (props.is_edit && props._button) {
+    //編集のためのリセット
     xCoordinate.value = props._button.x;
     yCoordinate.value = props._button.y;
     buttontitle.value = props._button.label;
     btcolor.value = props._button.color;
     selected_action.value = props._button.actionType;
     button_ipaddress.value = props._button.destination;
+    is_image.value = props._button.is_use_image;
+    imgfile.value = Array<File>();
+    if (props._button.actionType === AcctionType.None) {
+      file_name.value = "";
+      gcode.value = "";
+    } else if (props._button.actionType === AcctionType.ExecuteFile) {
+      file_name.value = props._button.action;
+    } else if (props._button.actionType === AcctionType.SendGcode) {
+      gcode.value = props._button.action;
+    } else file_name.value = "";
   } else {
+    //新規のボタンのためのリセット
     xCoordinate.value = newButton.x;
     yCoordinate.value = newButton.y;
     btcolor.value = newButton.color;
     button_ipaddress.value = ipadress.value[0] ?? "";
     selected_action.value = newButton.actionType;
     buttontitle.value = newButton.label;
+    is_image.value = newButton.is_use_image;
+    imgfile.value = Array<File>();
+    file_name.value = "";
+    gcode.value = "";
   }
   if (settingdata) ipadress.value = settingdata.controlBoardAddresses;
 }
@@ -150,7 +167,7 @@ function confirmButton() {
   } else makeButton();
 }
 
-function makeButton() {
+async function makeButton() {
   const selected_action_index = selected_action.value;
 
   const button = new ActionButton(
@@ -159,7 +176,7 @@ function makeButton() {
     xCoordinate.value,
     yCoordinate.value,
     selected_action_index as (typeof AcctionType)[keyof typeof AcctionType],
-    false,
+    is_image.value,
     false
   );
   button.color = btcolor.value;
@@ -170,12 +187,14 @@ function makeButton() {
     button.action = gcode.value;
   else button.action = "";
 
+  if (is_image.value) await button.set_image_from_file(imgfile.value[0]);
+
   settingdata?.actionButtons.push(button);
   closeDialog();
 }
 
 function editButton(button: ActionButton) {
-  settingdata?.actionButtons.filter((item) => {
+  settingdata?.actionButtons.filter(async (item) => {
     if (item === button) {
       item.x = xCoordinate.value;
       item.y = yCoordinate.value;
@@ -184,6 +203,12 @@ function editButton(button: ActionButton) {
       item.actionType =
         selected_action.value as (typeof AcctionType)[keyof typeof AcctionType];
       item.destination = button_ipaddress.value;
+      item.is_use_image = is_image.value;
+      if (is_image.value && imgfile.value.length > 0) {
+        await item.set_image_from_file(imgfile.value[0]);
+      } else if (!is_image.value) {
+        item.image_base64 = "";
+      }
     }
   });
 

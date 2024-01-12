@@ -30,11 +30,16 @@ import { ref, inject } from "vue";
 import { ActionButton, ActionTypeLabel, AcctionType } from "./ActionButton";
 import { APIComunicator } from "./APIComunicator";
 import { popScopeId } from "vue";
+import { SettingData } from "./SettingData";
+import { toast } from "vuetify-sonner";
 
 const basicDialog = ref();
 
 const apis = inject<Array<APIComunicator>>("apis");
 if (!apis) throw new Error("No API provided");
+
+const settingdata = inject<SettingData>("settingDatas"); //設定値を取得
+if (!settingdata) throw new Error("No SettingDatas provided");
 
 const props = defineProps<{
   actionbutton: ActionButton;
@@ -49,7 +54,9 @@ function cancel() {
 }
 
 async function performAction() {
-  if (props.actionbutton.actionType === AcctionType.None) closeDialog();
+  if (props.actionbutton.actionType === AcctionType.None) {
+    closeDialog();
+  }
 
   const api = apis?.find(
     (api) => api.duetAddressWithoutHttp === props.actionbutton.destination
@@ -62,18 +69,28 @@ async function performAction() {
 
   // Perform the action here
   if (props.actionbutton.actionType === AcctionType.ExecuteFile) {
-    // Execute file
-    console.log("Execute file: " + props.actionbutton.action);
+    // ファイルを実行
+    const command = "M32 " + props.actionbutton.action;
+    console.log("Send Gcode: " + command);
+    const res = await api?.sendDuetCommand(command);
+    console.log("Send Gcode: " + command + " res: " + res);
   } else if (props.actionbutton.actionType === AcctionType.SendGcode) {
-    // Send Gcode
+    // gcodeを送信
     console.log("Send Gcode: " + props.actionbutton.action);
     const res = await api?.sendDuetCommand(props.actionbutton.action);
     console.log("Send Gcode: " + props.actionbutton.action + " res: " + res);
   } else if (
     props.actionbutton.actionType === AcctionType.ExecuteRegisteredMotion
   ) {
+    //登録済みのモーションを実行
+
+    const command =
+      "M32 " + settingdata?.executionFolder + settingdata?.executionFileName;
+    console.log("Send Gcode: " + command);
+    const res = await api?.sendDuetCommand(command);
+
     // Send Gcode
-    console.log("Send Gcode: " + props.actionbutton.action);
+    console.log("Send Gcode: " + command + " res: " + res);
   }
 
   closeDialog();

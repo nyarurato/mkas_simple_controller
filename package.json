@@ -20,6 +20,7 @@
     "vue": "^3.2.13",
     "vue-router": "^4.0.3",
     "vuetify": "npm:@vuetify/nightly@next",
+    "vuetify-sonner": "^0.3.12",
     "webfontloader": "^1.0.0"
   },
   "devDependencies": {

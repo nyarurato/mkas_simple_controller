@@ -2,9 +2,13 @@
   <v-container>
     <v-row class="text-center">
       <v-app-bar color="orange">
-        <v-app-bar-nav-icon
-          @click.stop="drawer2 = !drawer2"
-        ></v-app-bar-nav-icon>
+        <template v-slot:prepend>
+          <v-app-bar-nav-icon
+            @click.stop="drawer2 = !drawer2"
+          ></v-app-bar-nav-icon>
+          <v-spacer />
+          <v-btn icon><v-icon color="red">mdi-chip</v-icon></v-btn>
+        </template>
 
         <v-app-bar-title class="align-items-center"
           ><v-img
@@ -24,6 +28,7 @@
       </v-app-bar>
       <slide-menu :drawer="drawer2"></slide-menu>
       <ButtonsView />
+      <VSonner :duration="5000" expand position="bottom-right" />
     </v-row>
   </v-container>
 </template>
@@ -37,10 +42,11 @@ import { provide } from "vue";
 import { SettingData } from "../components/SettingData";
 import { ActionButton } from "../components/ActionButton";
 import { APIComunicator } from "../components/APIComunicator";
+import { VSonner } from "vuetify-sonner";
 
 const settingDatas = reactive(new SettingData());
 const sample_action_button = new ActionButton(
-  "111",
+  "kas.local",
   "Sample",
   300,
   100,
@@ -53,7 +59,7 @@ sample_action_button.color = "#ff0000";
 settingDatas.actionButtons.push(sample_action_button);
 
 const sample_action_button2 = new ActionButton(
-  "111",
+  "kas.local",
   "Sample2",
   500,
   100,
