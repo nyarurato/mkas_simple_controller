@@ -20,6 +20,14 @@ export class APIComunicator {
   public get is_connected(): boolean {
     return this._is_connected;
   }
+  private _status = "";
+  public get status(): string {
+    return this._status;
+  }
+  public _last_message = "";
+  public get last_message(): string {
+    return this._last_message;
+  }
 
   constructor() {
     //pass
@@ -62,15 +70,33 @@ export class APIComunicator {
 
     try {
       const res_val = await res;
-      console.log(res_val);
+
       if (res_val.status === 200) {
+        this._status = (res_val.data.result ?? "") as string;
         return (res_val.data.result ?? "") as string;
       }
     } catch (error) {
       console.log(error);
-      return "";
+      return "error";
     }
-    return "";
+    return "error";
+  }
+
+  public async getDuetLastMessage(): Promise<string> {
+    const res = this.api.rrReplyGet();
+
+    try {
+      const res_val = await res;
+      console.log(res_val.data);
+      console.log(typeof res_val.data);
+      if (res_val.status === 200) {
+        return res_val.data !== undefined ? res_val.data : "";
+      }
+    } catch (error) {
+      console.log(error);
+      return "error";
+    }
+    return "error";
   }
 
   public async sendDuetCommand(gcode: string): Promise<boolean> {
@@ -109,3 +135,29 @@ export class APIComunicator {
     return false;
   }
 }
+
+export const DUETSTATUS = [
+  { val: 0, key: "disconnected", color: "#ff0000", description: "切断中" },
+  { val: 2, key: "updating", color: "#ffff00", description: "更新中" },
+  { val: 3, key: "off", color: "#ff0000", description: "オフ" },
+  { val: 4, key: "halted", color: "#ff0000", description: "停止中" },
+  { val: 5, key: "pausing", color: "#ffff00", description: "一時停止中" },
+  { val: 6, key: "paused", color: "#ffff00", description: "一時停止" },
+  { val: 7, key: "resuming", color: "#ffff00", description: "再開中" },
+  { val: 8, key: "cancelling", color: "#ffff00", description: "キャンセル中" },
+  { val: 9, key: "processing", color: "#0000ff", description: "処理中" },
+  {
+    val: 10,
+    key: "simulating",
+    color: "#00ff00",
+    description: "シミュレーション中",
+  },
+  { val: 11, key: "busy", color: "#ffff00", description: "ビジー" },
+  {
+    val: 12,
+    key: "changingTool",
+    color: "#ffff00",
+    description: "ツール変更中",
+  },
+  { val: 13, key: "idle", color: "#00ff00", description: "アイドル" },
+];

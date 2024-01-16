@@ -7,7 +7,11 @@
             @click.stop="drawer2 = !drawer2"
           ></v-app-bar-nav-icon>
           <v-spacer />
-          <v-btn icon><v-icon color="red">mdi-chip</v-icon></v-btn>
+          <StatusView
+            v-for="(api, id) in apis"
+            :api="api"
+            :key="id"
+          ></StatusView>
         </template>
 
         <v-app-bar-title class="align-items-center"
@@ -43,6 +47,7 @@ import { SettingData } from "../components/SettingData";
 import { ActionButton } from "../components/ActionButton";
 import { APIComunicator } from "../components/APIComunicator";
 import { VSonner } from "vuetify-sonner";
+import StatusView from "@/components/StatusView.vue";
 
 const settingDatas = reactive(new SettingData());
 const sample_action_button = new ActionButton(
