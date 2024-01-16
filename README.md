@@ -1,4 +1,4 @@
-# typescript_test2
+# mkas_simple_controller
 
 ## Project setup
 ```

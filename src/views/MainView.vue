@@ -14,13 +14,16 @@
           ></StatusView>
         </template>
 
-        <v-app-bar-title class="align-items-center"
-          ><v-img
+        <v-app-bar-title class="align-items-center">
+          <!--
+          <v-img
             :src="mkas_icon"
             height="1.7rem"
             max-width="1.7rem"
             class="d-inline-flex align-items-center mr-2"
           />
+          -->
+          <v-icon :icon="MkasIcon" color="#2b2b2b" size="large"></v-icon>
           MKA Simple Controller</v-app-bar-title
         >
         <template v-slot:append>
@@ -48,6 +51,7 @@ import { ActionButton } from "../components/ActionButton";
 import { APIComunicator } from "../components/APIComunicator";
 import { VSonner } from "vuetify-sonner";
 import StatusView from "@/components/StatusView.vue";
+import MkasIcon from "@/components/MkasIcon.vue";
 
 const settingDatas = reactive(new SettingData());
 const sample_action_button = new ActionButton(
@@ -76,9 +80,6 @@ const sample_action_button2 = new ActionButton(
 settingDatas.actionButtons.push(sample_action_button2);
 
 provide("settingDatas", settingDatas); //設定値を共有するためのprovide
-
-// Logo
-import mkas_icon from "../assets/mkas_icon.svg";
 
 const drawer2 = ref(false);
 

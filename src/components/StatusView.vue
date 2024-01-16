@@ -21,6 +21,7 @@
               <v-icon :color="getStatusColor()" size="small">mdi-circle</v-icon
               >{{ getStatusDiscription() }}
             </p>
+            <!--
             <p>
               最後のログ:
               <v-icon
@@ -29,6 +30,7 @@
                 >mdi-circle</v-icon
               >{{ props.api.last_message }}
             </p>
+            -->
           </v-card-item>
         </v-card>
       </v-tooltip>
@@ -60,14 +62,14 @@ function getStatusDiscription(): string {
 function getStatusColor(): string {
   return (
     DUETSTATUS.find((status) => status.key === props.api.status)?.color ??
-    "grey"
+    "#808080" //gray
   );
 }
 
 onMounted(() => {
   const intervalId = setInterval(() => {
     props.api.getDuetStatus();
-    props.api.getDuetLastMessage();
+    //props.api.getDuetLastMessage();
   }, 3000);
 
   // Cleanup the interval when the component is unmounted
