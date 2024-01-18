@@ -27,7 +27,7 @@
           MKA Simple Controller</v-app-bar-title
         >
         <template v-slot:append>
-          <v-btn icon href="https://github.com/nyarurato"
+          <v-btn icon href="https://github.com/nyarurato/mkas_simple_controller"
             ><!-- temporary link -->
             <v-icon>mdi-github</v-icon>
           </v-btn>
