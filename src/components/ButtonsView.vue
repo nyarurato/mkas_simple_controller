@@ -10,6 +10,12 @@
           :style="{
             top: button.y + 100 + 'px',
             left: button.x + 40 + 'px',
+            width: button.is_use_size ? button.size[0] + 'px' : 'auto',
+            height: button.is_use_size
+              ? button.size[1] + 'px'
+              : button.is_use_image
+              ? 'auto'
+              : 'calc(var(--v-btn-height) + 0px)',
           }"
           :color="button.color"
           class="button"
@@ -20,10 +26,8 @@
           <v-img
             v-if="button.is_use_image"
             :src="button.image_base64"
-            height="100px"
-            width="100px"
-            max-height="100px"
-            max-width="100px"
+            :height="button.is_use_size ? 'auto' : '100px'"
+            :width="button.is_use_size ? 'auto' : '100px'"
           ></v-img>
           <v-icon v-if="button.is_use_icon"></v-icon>
           {{ button.label }}

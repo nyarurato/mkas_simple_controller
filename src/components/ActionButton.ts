@@ -5,6 +5,8 @@ export class ActionButton {
   label = "ボタン";
   x = 0;
   y = 0;
+  size = [0, 0];
+  is_use_size = false;
   actionType =
     AcctionType.None as (typeof AcctionType)[keyof typeof AcctionType];
   is_use_image = false;
@@ -19,6 +21,8 @@ export class ActionButton {
     label?: string,
     x?: number,
     y?: number,
+    size?: [number, number],
+    is_use_size?: boolean,
     actionType?: (typeof AcctionType)[keyof typeof AcctionType],
     is_use_image?: boolean,
     is_use_icon?: boolean
@@ -27,6 +31,8 @@ export class ActionButton {
     if (label) this.label = label;
     if (x) this.x = x;
     if (y) this.y = y;
+    if (size) this.size = size;
+    if (is_use_size) this.is_use_size = is_use_size;
     if (actionType) this.actionType = actionType;
     if (is_use_image) this.is_use_image = is_use_image;
     if (is_use_icon) this.is_use_icon = is_use_icon;
@@ -60,6 +66,8 @@ export class ActionButton {
     this.label = param.label;
     this.x = param.x;
     this.y = param.y;
+    this.size = param.size;
+    this.is_use_size = param.is_use_size;
     this.actionType = param.actionType;
     this.is_use_image = param.is_use_image;
     this.is_use_icon = param.is_use_icon;

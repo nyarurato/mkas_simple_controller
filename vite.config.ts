@@ -2,6 +2,8 @@ import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import vuetify from "vite-plugin-vuetify";
 
+import packageJson from "./package.json";
+
 const path = require("path");
 
 // https://vitejs.dev/config/
@@ -14,7 +16,10 @@ export default defineConfig({
       autoImport: true,
     }),
   ],
-  define: { "process.env": {} },
+  define: {
+    "process.env": {},
+    "import.meta.env.PACKAGE_VERSION": JSON.stringify(packageJson.version),
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "src"),

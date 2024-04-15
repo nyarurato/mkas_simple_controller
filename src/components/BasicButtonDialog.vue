@@ -32,6 +32,7 @@
             ></v-file-input>
             <ColorPickerDialog v-model:color="btcolor"></ColorPickerDialog>
           </v-col>
+          <!-- 2列目 -->
           <v-col>
             <v-text-field
               type="number"
@@ -44,8 +45,26 @@
               label="ボタンY座標"
               v-model.number="yCoordinate"
             />
+            <v-switch
+              label="サイズ変更有効化"
+              v-model="is_use_size"
+              color="primary"
+            ></v-switch>
+            <div v-if="is_use_size">
+              <v-text-field
+                type="number"
+                label="ボタンサイズX"
+                v-model.number="button_size_x"
+              />
+
+              <v-text-field
+                type="number"
+                label="ボタンサイズY"
+                v-model.number="button_size_y"
+              />
+            </div>
           </v-col>
-          <!-- 2列目 -->
+          <!-- 3列目 -->
           <v-col>
             <v-select
               label="送信先"
@@ -108,6 +127,9 @@ const gcode = ref("");
 const file_name = ref("");
 const imgfile = ref(Array<File>());
 const is_image = ref(false);
+const is_use_size = ref(false);
+const button_size_x = ref(0);
+const button_size_y = ref(0);
 const selected_action = ref(0);
 const button_ipaddress = ref("");
 const btcolor = ref("#ff0000");
@@ -131,6 +153,9 @@ function reset_param() {
     selected_action.value = props._button.actionType;
     button_ipaddress.value = props._button.destination;
     is_image.value = props._button.is_use_image;
+    is_use_size.value = props._button.is_use_size;
+    button_size_x.value = props._button.size[0];
+    button_size_y.value = props._button.size[1];
     imgfile.value = Array<File>();
     if (props._button.actionType === AcctionType.None) {
       file_name.value = "";
@@ -149,6 +174,9 @@ function reset_param() {
     selected_action.value = newButton.actionType;
     buttontitle.value = newButton.label;
     is_image.value = newButton.is_use_image;
+    is_use_size.value = newButton.is_use_size;
+    button_size_x.value = newButton.size[0];
+    button_size_y.value = newButton.size[1];
     imgfile.value = Array<File>();
     file_name.value = "";
     gcode.value = "";
@@ -175,6 +203,8 @@ async function makeButton() {
     buttontitle.value,
     xCoordinate.value,
     yCoordinate.value,
+    [button_size_x.value, button_size_y.value],
+    is_use_size.value,
     selected_action_index as (typeof AcctionType)[keyof typeof AcctionType],
     is_image.value,
     false
@@ -203,6 +233,8 @@ function editButton(button: ActionButton) {
       item.actionType =
         selected_action.value as (typeof AcctionType)[keyof typeof AcctionType];
       item.destination = button_ipaddress.value;
+      item.size = [button_size_x.value, button_size_y.value];
+      item.is_use_size = is_use_size.value;
       item.is_use_image = is_image.value;
       if (is_image.value && imgfile.value.length > 0) {
         await item.set_image_from_file(imgfile.value[0]);

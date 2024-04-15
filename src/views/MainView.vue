@@ -24,8 +24,9 @@
           />
           -->
           <v-icon :icon="MkasIcon" color="#2b2b2b" size="large"></v-icon>
-          MKA Simple Controller</v-app-bar-title
-        >
+          MKA Simple Controller
+          <span id="version-text">v{{ settingDatas.version }}</span>
+        </v-app-bar-title>
         <template v-slot:append>
           <v-btn icon href="https://github.com/nyarurato/mkas_simple_controller"
             ><!-- temporary link -->
@@ -54,6 +55,7 @@ import StatusView from "@/components/StatusView.vue";
 import MkasIcon from "@/components/MkasIcon.vue";
 
 const settingDatas = reactive(new SettingData());
+settingDatas.version = import.meta.env.PACKAGE_VERSION;
 const sample_action_button = new ActionButton(
   "kas.local",
   "Sample",
@@ -93,3 +95,10 @@ const props = defineComponent({
   name: "About-2",
 });
 </script>
+
+<style scoped>
+#version-text {
+  font-size: 0.8rem;
+  margin-left: 0.3rem;
+}
+</style>
