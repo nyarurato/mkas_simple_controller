@@ -232,10 +232,18 @@ function editButton(button: ActionButton) {
       item.color = btcolor.value;
       item.actionType =
         selected_action.value as (typeof AcctionType)[keyof typeof AcctionType];
+
+      if (item.actionType === AcctionType.ExecuteFile)
+        item.action = file_name.value;
+      else if (item.actionType === AcctionType.SendGcode)
+        item.action = gcode.value;
+      else button.action = "";
+
       item.destination = button_ipaddress.value;
       item.size = [button_size_x.value, button_size_y.value];
       item.is_use_size = is_use_size.value;
       item.is_use_image = is_image.value;
+
       if (is_image.value && imgfile.value.length > 0) {
         await item.set_image_from_file(imgfile.value[0]);
       } else if (!is_image.value) {
