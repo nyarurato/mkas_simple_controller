@@ -27,6 +27,17 @@
       </ButtonsListDialog>
 
       <!-- List No.3 -->
+      <ControlBoardListDialog>
+        <template v-slot:openmethod="diag">
+          <v-list-item color="primary" @click="diag.show()">
+            <template v-slot:prepend>
+              <v-icon>mdi-ethernet-cable</v-icon>
+            </template>
+            <v-list-item-title>制御基板設定</v-list-item-title>
+          </v-list-item>
+        </template>
+      </ControlBoardListDialog>
+      <!-- List No.4 -->
 
       <SettingDialog>
         <template v-slot:openmethod="diag">
@@ -39,7 +50,7 @@
         </template>
       </SettingDialog>
 
-      <!-- List No.4 -->
+      <!-- List No.5 -->
       <SettingLoader>
         <template v-slot:openmethod="diag">
           <v-list-item color="primary" @click="diag.show()">
@@ -51,7 +62,7 @@
         </template>
       </SettingLoader>
 
-      <!-- List No.5 -->
+      <!-- List No.6 -->
       <SettingSaver
         :action-buttons="settingdata.actionButtons"
         :settings="'aaa'"
@@ -80,6 +91,7 @@ import SettingSaver from "./SettingSaver.vue";
 import SettingLoader from "./SettingLoader.vue";
 import { ActionButton } from "./ActionButton";
 import { SettingData } from "./SettingData";
+import ControlBoardListDialog from "./ControlBoardListDialog.vue";
 
 const settingdata = inject<SettingData>("settingDatas"); //設定値を取得
 if (!settingdata) throw new Error("No SettingDatas provided");

@@ -9,34 +9,6 @@
         <v-row>
           <!--1列目-->
           <v-col>
-            <div class="text-subtitle-1">制御基板設定</div>
-            <v-select
-              label="制御基板アドレス"
-              :items="settingdata.controlBoardAddresses.concat(['新規追加'])"
-              v-model="selectedAddress"
-            >
-            </v-select>
-            <v-text-field
-              v-if="selectedAddress === '新規追加'"
-              type="text"
-              id="ipAddress"
-              v-model="ipAddress"
-              label="新規制御基板アドレス"
-            />
-
-            <v-chip>
-              <span v-if="is_valid_ipaddress"
-                ><v-icon color="green">mdi-check-bold</v-icon>有効確認済み</span
-              >
-              <span v-if="!is_valid_ipaddress"
-                ><v-icon color="red">mdi-alert-circle</v-icon>未確認</span
-              >
-            </v-chip>
-
-            <v-btn @click="checkConnection">追加/確認</v-btn>
-          </v-col>
-          <!--2列目-->
-          <v-col>
             <div class="text-subtitle-1">制御基板実行設定</div>
             <v-text-field
               type="text"
@@ -51,7 +23,7 @@
               label="実行ファイル名"
             />
           </v-col>
-          <!--3列目-->
+          <!--2列目-->
           <v-col>
             <div class="text-subtitle-1">その他</div>
             <v-switch
@@ -105,39 +77,6 @@ watch(settingdata, () => {
   executableFileName.value = settingdata.executionFileName;
   executionFolder.value = settingdata.executionFolder;
 });
-
-async function checkConnection() {
-  // Perform connection check logic here
-  if (selectedAddress.value != "新規追加") {
-    //新規追加でない場合
-    ipAddress.value = selectedAddress.value;
-  }
-
-  if (apis) {
-    //apisにipaddressのapiがあるかどうか
-    const _api = apis.find(
-      (api) => api.duetAddressWithoutHttp === ipAddress.value
-    );
-
-    if (_api) {
-      //あれば、そのapiを使う
-      is_valid_ipaddress.value = await _api.checkValidAPI(ipAddress.value);
-    } else {
-      //なければ、新しくapiを作る
-      const api = new APIComunicator();
-      is_valid_ipaddress.value = await api?.checkValidAPI(ipAddress.value);
-      if (is_valid_ipaddress.value) apis.push(api);
-    }
-  }
-
-  //アドレス有効かつ設定値にない場合一覧に追加
-  if (
-    is_valid_ipaddress.value &&
-    !settingdata?.controlBoardAddresses.includes(ipAddress.value)
-  ) {
-    settingdata?.setControlBoardAddresses(ipAddress.value);
-  }
-}
 
 function saveSettings() {
   // Save settings here

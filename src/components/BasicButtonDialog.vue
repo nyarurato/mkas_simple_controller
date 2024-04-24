@@ -13,7 +13,7 @@
     </template>
     <template v-slot:title>{{ dialog_title }}</template>
     <template v-slot:content>
-      <v-form>
+      <v-form @submit.prevent>
         <v-row>
           <v-col>
             <v-text-field type="text" label="タイトル" v-model="buttontitle" />

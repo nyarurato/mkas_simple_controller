@@ -24,12 +24,6 @@
               <v-icon :color="getStatusColor()" size="small">mdi-circle</v-icon
               >{{ getStatusDiscription() }}
             </p>
-
-            <!--
-              <div v-if="!props.api.is_connected">
-              <v-btn variant="outlined">再接続</v-btn>
-            </div>
-            -->
           </v-card-item>
         </v-card>
       </v-tooltip>
@@ -71,8 +65,7 @@ function getStatusColor(): string {
 
 onMounted(() => {
   const intervalId = setInterval(() => {
-    props.api.getDuetStatus();
-    //props.api.getDuetLastMessage();
+    if (props.api.is_connected) props.api.getDuetStatus();
   }, 3000);
 
   // Cleanup the interval when the component is unmounted

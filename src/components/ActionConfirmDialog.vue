@@ -74,11 +74,17 @@ async function performAction() {
   const api = apis?.find(
     (api) => api.duetAddressWithoutHttp === props.actionbutton.destination
   );
-  console.log(api);
+
   if (!api) {
     console.log("API not found");
+    toast.error("接続先が確認できていません", {
+      description:
+        props.actionbutton.destination + " への接続の確認ができていません<br>",
+    });
+    closeDialog();
     return;
   }
+
   // Perform the action here
   if (props.actionbutton.actionType === AcctionType.ExecuteFile) {
     // ファイルを実行

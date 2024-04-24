@@ -21,7 +21,7 @@ export class APIComunicator {
   public get is_connected(): boolean {
     return this._is_connected;
   }
-  private _status = "";
+  private _status = "disconnected";
   public get status(): string {
     return this._status;
   }
@@ -40,6 +40,9 @@ export class APIComunicator {
     //もしaddressがhttp://かhttps://で始まっていない場合は、http://を付ける
     if (!address.match(/^https?:\/\//)) {
       address = "http://" + address;
+    }
+    if (this._duetAddress === "") {
+      this._duetAddress = address;
     }
 
     //次にaddressがDuetのAPIを持っているか確認する
