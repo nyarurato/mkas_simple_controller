@@ -1,7 +1,10 @@
 <template>
   <div>
-    <v-btn icon color="primary" @click="togglePopover">
-      <v-badge content="0" color="transparent" location="bottom right"
+    <v-btn icon :color="getBtnColor()" @click="togglePopover">
+      <v-badge
+        :content="$props.index"
+        color="transparent"
+        location="bottom right"
         ><v-icon>mdi-chip</v-icon></v-badge
       >
       <v-tooltip v-model="popoverOpen" location="bottom" activator="parent">
@@ -21,15 +24,11 @@
               <v-icon :color="getStatusColor()" size="small">mdi-circle</v-icon
               >{{ getStatusDiscription() }}
             </p>
+
             <!--
-            <p>
-              最後のログ:
-              <v-icon
-                :color="props.api.is_connected ? 'green' : 'red'"
-                size="small"
-                >mdi-circle</v-icon
-              >{{ props.api.last_message }}
-            </p>
+              <div v-if="!props.api.is_connected">
+              <v-btn variant="outlined">再接続</v-btn>
+            </div>
             -->
           </v-card-item>
         </v-card>
@@ -44,9 +43,9 @@ import { APIComunicator, DUETSTATUS } from "./APIComunicator";
 
 const props = defineProps<{
   api: APIComunicator;
+  index: number;
 }>();
 const popoverOpen = ref(false);
-const index = ref(0);
 
 function togglePopover() {
   popoverOpen.value = !popoverOpen.value;
@@ -57,6 +56,10 @@ function getStatusDiscription(): string {
     DUETSTATUS.find((status) => status.key === props.api.status)?.description ??
     "不明"
   );
+}
+
+function getBtnColor(): string {
+  return props.api.is_connected ? "primary" : "#666666";
 }
 
 function getStatusColor(): string {

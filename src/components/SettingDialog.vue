@@ -7,7 +7,9 @@
     <template v-slot:content>
       <v-form>
         <v-row>
+          <!--1列目-->
           <v-col>
+            <div class="text-subtitle-1">制御基板設定</div>
             <v-select
               label="制御基板アドレス"
               :items="settingdata.controlBoardAddresses.concat(['新規追加'])"
@@ -32,7 +34,10 @@
             </v-chip>
 
             <v-btn @click="checkConnection">追加/確認</v-btn>
-
+          </v-col>
+          <!--2列目-->
+          <v-col>
+            <div class="text-subtitle-1">制御基板実行設定</div>
             <v-text-field
               type="text"
               id="executionFolder"
@@ -45,8 +50,24 @@
               v-model="executableFileName"
               label="実行ファイル名"
             />
-            <v-btn @click="saveSettings" color="primary" block>保存</v-btn>
           </v-col>
+          <!--3列目-->
+          <v-col>
+            <div class="text-subtitle-1">その他</div>
+            <v-switch
+              label="実行後待機有効化"
+              v-model="is_use_wating_after_command"
+              color="primary"
+            ></v-switch>
+            <v-text-field
+              v-if="is_use_wating_after_command"
+              type="number"
+              id="waitingTime"
+              v-model="waitingTime"
+              label="再実行禁止時間(秒)"
+            />
+          </v-col>
+          <v-btn @click="saveSettings" color="primary" block>保存</v-btn>
         </v-row>
       </v-form>
     </template>
@@ -65,6 +86,8 @@ const executableFileName = ref("program.nc");
 const executionFolder = ref("0://gcodes/mkas/");
 const is_valid_ipaddress = ref(false);
 const basicDialog = ref();
+const is_use_wating_after_command = ref(false);
+const waitingTime = ref(5);
 
 const settingdata = inject<SettingData>("settingDatas"); //設定値を取得
 if (!settingdata) throw new Error("No SettingDatas provided");
@@ -90,7 +113,6 @@ async function checkConnection() {
     ipAddress.value = selectedAddress.value;
   }
 
-  console.log(settingdata);
   if (apis) {
     //apisにipaddressのapiがあるかどうか
     const _api = apis.find(
@@ -107,8 +129,12 @@ async function checkConnection() {
       if (is_valid_ipaddress.value) apis.push(api);
     }
   }
-  //追加
-  if (is_valid_ipaddress.value) {
+
+  //アドレス有効かつ設定値にない場合一覧に追加
+  if (
+    is_valid_ipaddress.value &&
+    !settingdata?.controlBoardAddresses.includes(ipAddress.value)
+  ) {
     settingdata?.setControlBoardAddresses(ipAddress.value);
   }
 }
@@ -118,6 +144,8 @@ function saveSettings() {
   if (settingdata) {
     settingdata.executionFileName = executableFileName.value;
     settingdata.executionFolder = executionFolder.value;
+    settingdata.isUseWaitingAfterCommand = is_use_wating_after_command.value;
+    settingdata.waitingTime = waitingTime.value;
   }
   basicDialog.value.close();
 }

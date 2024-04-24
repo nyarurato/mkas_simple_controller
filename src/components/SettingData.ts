@@ -6,14 +6,18 @@ export class SettingData {
   executionFolder: string;
   executionFileName: string;
   version: string;
+  waitingTime: number;
+  isUseWaitingAfterCommand: boolean;
   actionButtons: ActionButton[];
 
   constructor() {
     this.controlBoardAddresses = new Array<string>();
-    this.executionFolder = "0://gcodes/mkas/";
+    this.executionFolder = "0://gcodes/";
     this.executionFileName = "program.nc";
     this.version = "0.0.1";
     this.actionButtons = new Array<ActionButton>();
+    this.waitingTime = 5;
+    this.isUseWaitingAfterCommand = false;
   }
 
   public setControlBoardAddresses(controlBoardAddresses: string) {
@@ -36,6 +40,14 @@ export class SettingData {
     this.actionButtons.push(actionButtons);
   }
 
+  public setWaitingTime(waitingTime: number) {
+    this.waitingTime = waitingTime;
+  }
+
+  public setIsUseWaitingAfterCommand(isUseWaitingAfterCommand: boolean) {
+    this.isUseWaitingAfterCommand = isUseWaitingAfterCommand;
+  }
+
   public paste_param(param: SettingData) {
     this.controlBoardAddresses = new Array<string>();
     for (let i = 0; i < param.controlBoardAddresses.length; i++) {
@@ -50,5 +62,7 @@ export class SettingData {
       acbutton.paste_param(param.actionButtons[i]);
       this.actionButtons.push(acbutton);
     }
+    this.waitingTime = param.waitingTime;
+    this.isUseWaitingAfterCommand = param.isUseWaitingAfterCommand;
   }
 }

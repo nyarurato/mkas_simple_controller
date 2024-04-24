@@ -22,18 +22,24 @@
       <v-btn @click="cancel" color="warning">Cancel</v-btn>
     </template>
   </BasicDialog>
+  <WaitingCircular
+    ref="waitingCircular"
+    :duration="settingdata.waitingTime"
+  ></WaitingCircular>
 </template>
 
 <script lang="ts" setup>
 import BasicDialog from "./BasicDialog.vue";
-import { ref, inject } from "vue";
+import { ref, inject, Ref } from "vue";
 import { ActionButton, ActionTypeLabel, AcctionType } from "./ActionButton";
 import { APIComunicator } from "./APIComunicator";
 import { popScopeId } from "vue";
 import { SettingData } from "./SettingData";
 import { toast } from "vuetify-sonner";
+import WaitingCircular from "./WaitingCircular.vue";
 
-const basicDialog = ref();
+const basicDialog = ref<InstanceType<typeof BasicDialog> | null>(null);
+const waitingCircular = ref<InstanceType<typeof WaitingCircular> | null>(null);
 
 const apis = inject<Array<APIComunicator>>("apis");
 if (!apis) throw new Error("No API provided");
@@ -45,8 +51,10 @@ const props = defineProps<{
   actionbutton: ActionButton;
 }>();
 
+const showLoading = ref(false);
+
 function closeDialog() {
-  basicDialog.value.close();
+  basicDialog.value?.close();
 }
 
 function cancel() {
@@ -58,6 +66,11 @@ async function performAction() {
     closeDialog();
   }
 
+  if (settingdata?.isUseWaitingAfterCommand) {
+    showLoading.value = true;
+    waitingCircular.value.open();
+  }
+
   const api = apis?.find(
     (api) => api.duetAddressWithoutHttp === props.actionbutton.destination
   );
@@ -66,7 +79,6 @@ async function performAction() {
     console.log("API not found");
     return;
   }
-
   // Perform the action here
   if (props.actionbutton.actionType === AcctionType.ExecuteFile) {
     // ファイルを実行

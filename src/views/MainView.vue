@@ -10,6 +10,7 @@
           <StatusView
             v-for="(api, id) in apis"
             :api="api"
+            :index="id"
             :key="id"
           ></StatusView>
         </template>

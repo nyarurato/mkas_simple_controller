@@ -1,8 +1,9 @@
-import axios from "axios";
+import axios, { Axios } from "axios";
 import { DefaultApi } from "./Duet/api";
 import { Configuration } from "./Duet/configuration";
 import RawAxiosRequestHeaders from "axios";
 import { toast } from "vuetify-sonner";
+import { AxiosError } from "axios";
 
 // Duetのconfig.gにM586 C"*"必要かもしれない
 
@@ -46,7 +47,7 @@ export class APIComunicator {
     const res = this.api.rrConnectGet("reprap");
     try {
       const res_val = await res;
-      console.log(res_val);
+      //console.log(res_val);
       if (res_val.status === 200) {
         this._duetAddress = address;
         this._is_connected = true;
@@ -75,10 +76,26 @@ export class APIComunicator {
         this._status = (res_val.data.result ?? "") as string;
         return (res_val.data.result ?? "") as string;
       }
-    } catch (error) {
+    } catch (error: any) {
+      if (error instanceof AxiosError) {
+        if (
+          error.code === AxiosError.ERR_NETWORK ||
+          error.code === AxiosError.ETIMEDOUT
+        ) {
+          if (this._is_connected) {
+            toast.error("Duetとの通信エラー", {
+              description: this.duetAddress + "との通信が失敗しました。",
+            });
+            this._is_connected = false;
+          }
+          this._status = DUETSTATUS[0].key;
+        }
+      }
+
       console.log(error);
       return "error";
     }
+
     return "error";
   }
 
